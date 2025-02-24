@@ -31,3 +31,13 @@ target_link_libraries(connection_handler PRIVATE unofficial::http_parser::http_p
 add_executable(http-server ${SOURCE_FILES})
 
 target_link_libraries(http-server PRIVATE pthread unofficial::http_parser::http_parser thread_pool connection_handler)
+
+# Add an option to toggle the use of http-parser
+option(USE_HTTP_PARSER "Set to ON to use http-parser, OFF for manual parsing" OFF)
+
+# Pass the option as a compile definition
+if(USE_HTTP_PARSER)
+    target_compile_definitions(connection_handler PRIVATE USE_HTTP_PARSER=1)
+else()
+    target_compile_definitions(connection_handler PRIVATE USE_HTTP_PARSER=0)
+endif()

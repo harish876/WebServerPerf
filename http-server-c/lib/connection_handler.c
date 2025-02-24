@@ -1,8 +1,12 @@
 #include "connection_handler.h"
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+
+#if USE_HTTP_PARSER
+#include "http_parser.h"
 
 int on_url(http_parser *parser, const char *at, size_t length) {
   request_info *req_info = (request_info *)parser->data;
@@ -24,6 +28,7 @@ int on_message_begin(http_parser *parser) {
   memset(req_info, 0, sizeof(request_info)); // Clear previous request info
   return 0;
 }
+#endif
 
 void handle_connection(int conn) {
   uint8_t buff[1024];
@@ -35,6 +40,7 @@ void handle_connection(int conn) {
   }
   buff[bytes_read] = '\0';
 
+#if USE_HTTP_PARSER
   http_parser parser;
   http_parser_init(&parser, HTTP_REQUEST);
 
@@ -78,6 +84,29 @@ void handle_connection(int conn) {
     char response[] = "HTTP/1.1 404 Not Found\r\n\r\n";
     send(conn, response, sizeof(response) - 1, 0);
   }
+#else
+  char method[16], path[1024];
+  sscanf((char *)buff, "%s %s", method, path);
+
+  // printf("Methods: %s Path: %s\n", method, path);
+  if (strncmp(path, "/echo/", 6) == 0 && strcmp(method, "GET") == 0) {
+    char *content = path + 6; // 6 because that's the size of "/echo/" string
+    size_t contentLength = strlen(content);
+    char response[1024];
+    int response_length =
+        snprintf(response, sizeof(response),
+                 "HTTP/1.1 200 OK\r\nContent-Type: "
+                 "text/plain\r\nContent-Length: %zu\r\n\r\n%s",
+                 contentLength, content);
+    send(conn, response, response_length, 0);
+  } else if (strcmp(path, "/") == 0) {
+    char response[] = "HTTP/1.1 200 OK\r\n\r\n";
+    send(conn, response, sizeof(response) - 1, 0);
+  } else {
+    char response[] = "HTTP/1.1 404 Not Found\r\n\r\n";
+    send(conn, response, sizeof(response) - 1, 0);
+  }
+#endif
 
   close(conn);
 }

@@ -93,6 +93,7 @@ void use_epoll(int server_fd) {
   event.events = EPOLLIN;
   event.data.fd = server_fd;
 
+  // Add the server_fd to the epoll instance's interest list
   if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, server_fd, &event) == -1) {
     perror("epoll_ctl");
     exit(EXIT_FAILURE);
@@ -127,7 +128,6 @@ void use_epoll(int server_fd) {
       }
     }
   }
-
   close(epoll_fd);
 }
 
