@@ -5,7 +5,7 @@ fn main() -> std::io::Result<()> {
     let args: Vec<String> = env::args().collect();
     let binding = "threads".to_string();
     let mode = args.get(1).unwrap_or(&binding);
-    let listener = TcpListener::bind("127.0.0.1:4221").unwrap();
+    let listener = TcpListener::bind("0.0.0.0:4221").unwrap();
 
     println!("Running server with mode: {}", mode);
 
