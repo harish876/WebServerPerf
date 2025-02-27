@@ -18,3 +18,7 @@
 2. From a server standpoint, Rust demonstrates lower application-side overhead (0.43% of the time) compared to C (1.58%).
 
 3. ![Concurrency Compare for `/echo` endpoint](/data/results/comparison_epoll_3_echo.png)
+
+4. ![Rust Perf Data](/data/results/rust_perf_report.png)
+
+5. ![C Perf Data](/data/results/c_perf_report.png)
