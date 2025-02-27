@@ -1,3 +1,4 @@
+Run 1:
 This is ApacheBench, Version 2.3 <$Revision: 1913912 $>
 Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
 Licensed to The Apache Software Foundation, http://www.apache.org/
@@ -12,31 +13,31 @@ Server Port:            4221
 Document Path:          /echo/HELLO
 Document Length:        5 bytes
 
-Concurrency Level:      500
-Time taken for tests:   24.329 seconds
+Concurrency Level:      750
+Time taken for tests:   32.883 seconds
 Complete requests:      10000
 Failed requests:        0
 Total transferred:      690000 bytes
 HTML transferred:       50000 bytes
-Requests per second:    411.03 [#/sec] (mean)
-Time per request:       1216.468 [ms] (mean)
-Time per request:       2.433 [ms] (mean, across all concurrent requests)
-Transfer rate:          27.70 [Kbytes/sec] received
+Requests per second:    304.11 [#/sec] (mean)
+Time per request:       2466.188 [ms] (mean)
+Time per request:       3.288 [ms] (mean, across all concurrent requests)
+Transfer rate:          20.49 [Kbytes/sec] received
 
 Connection Times (ms)
               min  mean[+/-sd] median   max
-Connect:       17  539 710.3    107    7088
-Processing:    47  240 562.5     98   18993
-Waiting:       29  239 562.2     97   18993
-Total:         74  779 896.6    322   19097
+Connect:       26 1016 1137.7   1075   12091
+Processing:    26  230 604.5     94   16624
+Waiting:       21  229 604.0     93   16624
+Total:         53 1246 1314.8   1168   26421
 
 Percentage of the requests served within a certain time (ms)
-  50%    322
-  66%   1144
-  75%   1181
-  80%   1199
-  90%   1964
-  95%   2210
-  98%   3185
-  99%   4166
- 100%  19097 (longest request)
+  50%   1168
+  66%   1224
+  75%   1925
+  80%   2176
+  90%   2871
+  95%   3429
+  98%   4415
+  99%   5218
+ 100%  26421 (longest request)

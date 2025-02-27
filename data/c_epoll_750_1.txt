@@ -14,30 +14,30 @@ Document Path:          /echo/HELLO
 Document Length:        5 bytes
 
 Concurrency Level:      750
-Time taken for tests:   25.510 seconds
+Time taken for tests:   21.207 seconds
 Complete requests:      10000
 Failed requests:        0
-Total transferred:      800000 bytes
+Total transferred:      690000 bytes
 HTML transferred:       50000 bytes
-Requests per second:    392.00 [#/sec] (mean)
-Time per request:       1913.247 [ms] (mean)
-Time per request:       2.551 [ms] (mean, across all concurrent requests)
-Transfer rate:          30.63 [Kbytes/sec] received
+Requests per second:    471.55 [#/sec] (mean)
+Time per request:       1590.490 [ms] (mean)
+Time per request:       2.121 [ms] (mean, across all concurrent requests)
+Transfer rate:          31.77 [Kbytes/sec] received
 
 Connection Times (ms)
               min  mean[+/-sd] median   max
-Connect:       20 1036 1244.8   1074   19080
-Processing:    21  319 848.6     97   22165
-Waiting:       21  315 844.4     97   22165
-Total:         46 1355 1574.8   1168   23251
+Connect:       17  826 1058.3    118   11140
+Processing:    51  319 725.2     99   21083
+Waiting:       18  318 724.5     99   21083
+Total:         75 1146 1282.0    879   21145
 
 Percentage of the requests served within a certain time (ms)
-  50%   1168
-  66%   1296
-  75%   2147
-  80%   2181
-  90%   3174
-  95%   4192
-  98%   5917
-  99%   7794
- 100%  23251 (longest request)
+  50%    879
+  66%   1201
+  75%   1494
+  80%   2159
+  90%   2645
+  95%   3413
+  98%   4434
+  99%   5433
+ 100%  21145 (longest request)

@@ -1,0 +1,55 @@
+import os
+import re
+import argparse
+import statistics
+
+def extract_median_times(file_path):
+    median_times = []
+    failed_tries = 0
+    with open(file_path, 'r') as file:
+        content = file.read()
+        runs = re.split(r'Run \d+:', content)
+        for run in runs[1:]:  # Skip the first split part as it is before the first "Run X:"
+            match = re.search(r'50%\s+(\d+)', run)
+            if match:
+                median_time = int(match.group(1))
+                median_times.append(median_time)
+            else:
+                failed_tries += 1
+    return median_times, failed_tries
+
+def main(language, mode, num_runs):
+    output_dir = "../data"
+    concurrency_levels = [250, 500, 750]
+    
+    print(f"Language: {language}")
+    print(f"Mode: {mode}")
+    print(f"Number of runs: {num_runs}")
+    print("---" * 20)
+
+    for concurrency in concurrency_levels:
+        file_name = f"{language}_{mode}_{concurrency}_{num_runs}.txt"
+        file_path = os.path.join(output_dir, file_name)
+        if os.path.exists(file_path):
+            median_times, failed_tries = extract_median_times(file_path)
+            if median_times:
+                mean_of_medians = statistics.mean(median_times)
+                print(f"Median times for {file_name}: {median_times}")
+                print(f"Mean of median times for concurrency level {concurrency}: {mean_of_medians}")
+            else:
+                print(f"No median times found for {file_name}.")
+            print(f"Number of failed tries for {file_name}: {failed_tries}")
+        else:
+            print(f"File {file_path} does not exist.")
+            
+        print("---" * 20)
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Extract median times from benchmark files.')
+    parser.add_argument('language', type=str, help='The programming language used.')
+    parser.add_argument('mode', type=str, help='The mode used.')
+    parser.add_argument('num_runs', type=int, help='The number of runs.')
+
+    args = parser.parse_args()
+    
+    main(args.language, args.mode, args.num_runs)
