@@ -16,21 +16,17 @@ pub fn use_threads(listener: TcpListener) {
         thread::spawn(|| {
             stream.handle_connection();
         });
-
-        println!("Client Connected");
     }
 }
 
 pub fn use_thread_pool(listener: TcpListener) {
-    let pool = ThreadPool::new(4);
+    let pool = ThreadPool::new(100);
     for stream in listener.incoming() {
         let stream = stream.unwrap();
 
         pool.execute(|| {
             stream.handle_connection();
         });
-
-        println!("Client Connected");
     }
 }
 
