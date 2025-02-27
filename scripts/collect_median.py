@@ -18,13 +18,18 @@ def extract_median_times(file_path):
                 failed_tries += 1
     return median_times, failed_tries
 
-def main(language, mode, num_runs):
-    output_dir = "../data"
+def main(language, mode, num_runs,endpoint:str):
+    output_dir = f"../data/tests/{endpoint}"
+    if not os.path.exists(output_dir):
+        print(f"Experiment directory does not exist")
+        return
+    
     concurrency_levels = [250, 500, 750]
     
     print(f"Language: {language}")
     print(f"Mode: {mode}")
     print(f"Number of runs: {num_runs}")
+    print(f"Endpoint: {endpoint}")
     print("---" * 20)
 
     for concurrency in concurrency_levels:
@@ -49,7 +54,8 @@ if __name__ == "__main__":
     parser.add_argument('language', type=str, help='The programming language used.')
     parser.add_argument('mode', type=str, help='The mode used.')
     parser.add_argument('num_runs', type=int, help='The number of runs.')
+    parser.add_argument('endpoint', type=str, help='The endpoint to be profiled.')
 
     args = parser.parse_args()
     
-    main(args.language, args.mode, args.num_runs)
+    main(args.language, args.mode, args.num_runs,args.endpoint)

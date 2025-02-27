@@ -4,9 +4,9 @@ import argparse
 import os
 import matplotlib.pyplot as plt
 
-def get_mean_of_medians(language, mode, num_runs):
+def get_mean_of_medians(language, mode, num_runs, endpoint):
     result = subprocess.run(
-        ['python3', 'collect_median.py', language, mode, str(num_runs)],
+        ['python3', 'collect_median.py', language, mode, str(num_runs), endpoint],
         capture_output=True,
         text=True
     )
@@ -43,7 +43,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=f'Plot comparison of mean of median times for Rust and C.')
     parser.add_argument('mode', type=str, help='The mode used.')
     parser.add_argument('num_runs', type=int, help='The number of runs.')
-    parser.add_argument("endpoint",type=str, help='Endpoint which is tested. For eg /echo')
+    parser.add_argument("endpoint",type=str, help='Endpoint which is tested. For eg echo')
 
     args = parser.parse_args()
 
