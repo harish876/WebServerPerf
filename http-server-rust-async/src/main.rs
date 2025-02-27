@@ -1,7 +1,11 @@
-use hyper::service::{make_service_fn, service_fn};
-use hyper::{Body, Request, Response, Server};
+use hyper::server::conn::Http;
+use hyper::service::service_fn;
+use hyper::{Body, Request, Response};
 use std::convert::Infallible;
 use std::net::SocketAddr;
+use tokio::net::TcpListener;
+
+use hyper::server::conn::AddrIncoming;
 
 async fn handle_request(req: Request<Body>) -> Result<Response<Body>, Infallible> {
     let path = req.uri().path().to_string();
@@ -14,20 +18,35 @@ async fn handle_request(req: Request<Body>) -> Result<Response<Body>, Infallible
 }
 
 #[tokio::main]
-async fn main() {
-    // Define the address to bind the server to
+async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     let addr = SocketAddr::from(([0, 0, 0, 0], 4221));
 
-    // Create a service that handles incoming requests
-    let make_svc =
-        make_service_fn(|_conn| async { Ok::<_, Infallible>(service_fn(handle_request)) });
-
-    // Create the server
-    let server = Server::bind(&addr).serve(make_svc);
-
-    // Run the server
+    let listener = TcpListener::bind(addr).await?;
     println!("Listening on http://{}", addr);
-    if let Err(e) = server.await {
-        eprintln!("server error: {}", e);
+    loop {
+        // When an incoming TCP connection is received grab a TCP stream for
+        // client<->server communication.
+        //
+        // Note, this is a .await point, this loop will loop forever but is not a busy loop. The
+        // .await point allows the Tokio runtime to pull the task off of the thread until the task
+        // has work to do. In this case, a connection arrives on the port we are listening on and
+        // the task is woken up, at which point the task is then put back on a thread, and is
+        // driven forward by the runtime, eventually yielding a TCP stream.
+        let (tcp, _) = listener.accept().await?;
+        // Use an adapter to access something implementing `tokio::io` traits as if they implement
+        let io = tcp;
+
+        // Spin up a new task in Tokio so we can continue to listen for new TCP connection on the
+        // current task without waiting for the processing of the HTTP1 connection we just received
+        // to finish
+        tokio::task::spawn(async move {
+            // Handle the connection from the client using HTTP1 and pass any
+            if let Err(err) = Http::new()
+                .serve_connection(io, service_fn(handle_request))
+                .await
+            {
+                println!("Error serving connection: {:?}", err);
+            }
+        });
     }
 }
