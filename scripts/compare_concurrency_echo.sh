@@ -7,7 +7,7 @@ fi
 
 LANGUAGE=$1
 MODE=$2
-URL="http://64.23.188.215:4221/echo/hellp"
+URL="http://64.23.188.215:4221/echo/hello"
 concurrency_values=(250 500 750)
 OUTPUT_DIR="../data/tests/echo"
 NUM_RUNS=${3:-3} #Default to 3 if not pased 

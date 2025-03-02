@@ -1,0 +1,93 @@
+Run 1:
+This is ApacheBench, Version 2.3 <$Revision: 1913912 $>
+Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+Licensed to The Apache Software Foundation, http://www.apache.org/
+
+Benchmarking 64.23.188.215 (be patient)
+
+
+Server Software:        
+Server Hostname:        64.23.188.215
+Server Port:            4221
+
+Document Path:          /echo/hellp
+Document Length:        5 bytes
+
+Concurrency Level:      500
+Time taken for tests:   23.475 seconds
+Complete requests:      10000
+Failed requests:        0
+Total transferred:      800000 bytes
+HTML transferred:       50000 bytes
+Requests per second:    425.99 [#/sec] (mean)
+Time per request:       1173.747 [ms] (mean)
+Time per request:       2.347 [ms] (mean, across all concurrent requests)
+Transfer rate:          33.28 [Kbytes/sec] received
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:       28  381 418.0    166    5744
+Processing:    48  432 859.4    148   17473
+Waiting:       48  430 858.2    148   17473
+Total:        129  813 951.4    529   17507
+
+Percentage of the requests served within a certain time (ms)
+  50%    529
+  66%    782
+  75%    974
+  80%   1095
+  90%   1649
+  95%   2262
+  98%   3515
+  99%   5195
+ 100%  17507 (longest request)
+Run 2:
+This is ApacheBench, Version 2.3 <$Revision: 1913912 $>
+Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+Licensed to The Apache Software Foundation, http://www.apache.org/
+
+Benchmarking 64.23.188.215 (be patient)
+Total of 9996 requests completed
+Run 3:
+This is ApacheBench, Version 2.3 <$Revision: 1913912 $>
+Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+Licensed to The Apache Software Foundation, http://www.apache.org/
+
+Benchmarking 64.23.188.215 (be patient)
+
+
+Server Software:        
+Server Hostname:        64.23.188.215
+Server Port:            4221
+
+Document Path:          /echo/hellp
+Document Length:        5 bytes
+
+Concurrency Level:      500
+Time taken for tests:   26.436 seconds
+Complete requests:      10000
+Failed requests:        0
+Total transferred:      800000 bytes
+HTML transferred:       50000 bytes
+Requests per second:    378.27 [#/sec] (mean)
+Time per request:       1321.800 [ms] (mean)
+Time per request:       2.644 [ms] (mean, across all concurrent requests)
+Transfer rate:          29.55 [Kbytes/sec] received
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:       60  380 411.1    167    5776
+Processing:    75  402 850.9    152   20668
+Waiting:       59  399 847.2    152   20668
+Total:        147  782 939.3    536   21396
+
+Percentage of the requests served within a certain time (ms)
+  50%    536
+  66%    776
+  75%    895
+  80%   1071
+  90%   1445
+  95%   2052
+  98%   3262
+  99%   4508
+ 100%  21396 (longest request)

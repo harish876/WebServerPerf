@@ -3,6 +3,7 @@ import re
 import argparse
 import os
 import matplotlib.pyplot as plt
+import numpy as np
 
 def get_mean_of_medians(language, mode, num_runs, endpoint):
     result = subprocess.run(
@@ -19,19 +20,24 @@ def get_mean_of_medians(language, mode, num_runs, endpoint):
             mean_of_medians[concurrency] = mean
     return mean_of_medians
 
-def plot_comparison(rust_means, c_means, mode, num_runs,endpoint):
+def plot_comparison(rust_means, c_means, mode, num_runs, endpoint):
     concurrency_levels = sorted(rust_means.keys())
     rust_values = [rust_means[concurrency] for concurrency in concurrency_levels]
     c_values = [c_means[concurrency] for concurrency in concurrency_levels]
 
-    plt.plot(concurrency_levels, rust_values, label='Rust', marker='o')
-    plt.plot(concurrency_levels, c_values, label='C', marker='o')
+    bar_width = 0.35
+    index = np.arange(len(concurrency_levels))
+
+    plt.bar(index, rust_values, bar_width, label='Rust')
+    plt.bar(index + bar_width, c_values, bar_width, label='C')
+
     plt.xlabel('Concurrency Level')
     plt.ylabel('Mean of Median Times (ms)')
     plt.title(f'Comparison of Mean of Median Times for Rust and C - endpoint {endpoint} \nMode: {mode}, Runs: {num_runs}')
+    plt.xticks(index + bar_width / 2, concurrency_levels)
     plt.legend()
     plt.grid(True)
-    
+
     # Save the plot to a file
     output_dir = "../data/results"
     os.makedirs(output_dir, exist_ok=True)
@@ -40,13 +46,13 @@ def plot_comparison(rust_means, c_means, mode, num_runs,endpoint):
     plt.show()
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description=f'Plot comparison of mean of median times for Rust and C.')
+    parser = argparse.ArgumentParser(description='Plot comparison of mean of median times for Rust and C.')
     parser.add_argument('mode', type=str, help='The mode used.')
     parser.add_argument('num_runs', type=int, help='The number of runs.')
-    parser.add_argument("endpoint",type=str, help='Endpoint which is tested. For eg echo')
+    parser.add_argument('endpoint', type=str, help='Endpoint which is tested. For example, /echo')
 
     args = parser.parse_args()
 
-    rust_means = get_mean_of_medians('rust', args.mode, args.num_runs)
-    c_means = get_mean_of_medians('c', args.mode, args.num_runs)
-    plot_comparison(rust_means, c_means, args.mode, args.num_runs,args.endpoint)
+    rust_means = get_mean_of_medians('rust', args.mode, args.num_runs, args.endpoint)
+    c_means = get_mean_of_medians('c', args.mode, args.num_runs, args.endpoint)
+    plot_comparison(rust_means, c_means, args.mode, args.num_runs, args.endpoint)
