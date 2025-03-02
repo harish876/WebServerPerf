@@ -182,7 +182,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "http-server-rust-async"
+name = "http_server_rust-tokio"
 version = "0.1.0"
 dependencies = [
  "hyper 0.14.32",
