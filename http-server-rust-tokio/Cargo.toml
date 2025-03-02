@@ -7,3 +7,5 @@ edition = "2024"
 tokio = { version = "1", features = ["full", "net"] }
 hyper = { version = "0.14", features = ["full"] }
 hyper-util = "0.1.10"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"

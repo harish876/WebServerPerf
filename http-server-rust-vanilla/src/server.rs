@@ -20,7 +20,7 @@ pub fn use_threads(listener: TcpListener) {
 }
 
 pub fn use_thread_pool(listener: TcpListener) {
-    let pool = ThreadPool::new(100);
+    let pool = ThreadPool::new(2);
     for stream in listener.incoming() {
         let stream = stream.unwrap();
 
@@ -33,7 +33,6 @@ pub fn use_thread_pool(listener: TcpListener) {
 const MAX_EVENTS: usize = 1024;
 pub fn use_epoll(listener: TcpListener) -> io::Result<()> {
     unsafe {
-        // Set the listener to non-blocking mode
         listener.set_nonblocking(true)?;
 
         let epoll_fd = epoll_create1(0);

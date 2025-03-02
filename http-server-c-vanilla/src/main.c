@@ -1,6 +1,7 @@
 #include "connection_handler.h"
 #include "thread_pool.h"
 #include <errno.h>
+#include <fcntl.h>
 #include <netinet/in.h>
 #include <netinet/ip.h>
 #include <pthread.h>
@@ -14,6 +15,7 @@
 #define POOL_SIZE 32
 #define QUEUE_SIZE 128
 #define MAX_EVENTS 10
+#define BACKLOG 200 // how many pending connections queue will hold
 
 // Global client counter
 int client_counter = 0;
@@ -23,6 +25,22 @@ void *handle_connection_wrapper(void *arg) {
   free(arg); // Free the allocated memory for the connection descriptor
   handle_connection(conn);
   return NULL;
+}
+
+int set_non_blocking(int sockfd) {
+  int flags, s;
+  flags = fcntl(sockfd, F_GETFL, 0);
+  if (flags == -1) {
+    perror("fcntl");
+    return -1;
+  }
+  flags |= O_NONBLOCK;
+  s = fcntl(sockfd, F_SETFL, flags);
+  if (s == -1) {
+    perror("fcntl");
+    return -1;
+  }
+  return 0;
 }
 
 void use_thread_pool(int server_fd) {
@@ -105,16 +123,25 @@ void use_epoll(int server_fd) {
 
   while (1) {
     int n = epoll_wait(epoll_fd, events, MAX_EVENTS, -1);
+    if (n == -1) {
+      perror("epoll_wait");
+      break;
+    }
     for (int i = 0; i < n; i++) {
       if (events[i].data.fd == server_fd) {
         client_addr_len = sizeof(client_addr);
         int conn = accept(server_fd, (struct sockaddr *)&client_addr,
                           &client_addr_len);
-        if (conn < 0) {
-          perror("accept");
-          continue;
-        }
 
+        if (conn == -1) {
+          if ((errno == EAGAIN) || (errno == EWOULDBLOCK)) {
+            break;
+          } else {
+            perror("accept");
+            break;
+          }
+        }
+        set_non_blocking(conn);
         event.events = EPOLLIN | EPOLLET;
         event.data.fd = conn;
         if (epoll_ctl(epoll_fd, EPOLL_CTL_ADD, conn, &event) == -1) {
@@ -155,6 +182,8 @@ int main(int argc, char *argv[]) {
     return 1;
   }
 
+  // set_non_blocking(server_fd);
+
   // Since the tester restarts your program quite often, setting SO_REUSEADDR
   // ensures that we don't run into 'Address already in use' errors
   int reuse = 1;
@@ -173,8 +202,7 @@ int main(int argc, char *argv[]) {
     return 1;
   }
 
-  int connection_backlog = 5;
-  if (listen(server_fd, connection_backlog) != 0) {
+  if (listen(server_fd, BACKLOG) != 0) {
     printf("Listen failed: %s \n", strerror(errno));
     return 1;
   }
@@ -186,6 +214,7 @@ int main(int argc, char *argv[]) {
   } else if (strcmp(argv[1], "threads") == 0) {
     use_threads(server_fd);
   } else if (strcmp(argv[1], "epoll") == 0) {
+    set_non_blocking(server_fd);
     use_epoll(server_fd);
   } else {
     fprintf(stderr, "Invalid mode: %s\n", argv[1]);

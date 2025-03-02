@@ -1,18 +1,19 @@
 #!/bin/bash
 
 # Check if the server name variable is provided
-if [ -z "$1" ]; then
-    echo "Usage: $0 <server_name>"
+if [ "$#" -lt 2 ]; then
+    echo "Usage: $0 <server_name> <profile_name>"
     exit 1
 fi
 
 # Get the server name from the first argument
 SERVER_NAME=$1
+PROFILE_NAME=$2
 OUTPUT_DIR="../data/profiles"
 
 # Define the input and output file paths
-INPUT_FILE="${OUTPUT_DIR}/out_${SERVER_NAME}.profile-folded"
-FLAMEGRAPH_FILE="${OUTPUT_DIR}/flamegraph_${SERVER_NAME}.svg"
+INPUT_FILE="${OUTPUT_DIR}/out_${SERVER_NAME}_${PROFILE_NAME}.profile-folded"
+FLAMEGRAPH_FILE="${OUTPUT_DIR}/flamegraph_${SERVER_NAME}_${PROFILE_NAME}.svg"
 
 # Generate the flame graph
 echo "Generating flame graph..."
