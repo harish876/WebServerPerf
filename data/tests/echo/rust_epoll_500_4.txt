@@ -1,0 +1,139 @@
+Run 1:
+This is ApacheBench, Version 2.3 <$Revision: 1913912 $>
+Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+Licensed to The Apache Software Foundation, http://www.apache.org/
+
+Benchmarking 64.23.188.215 (be patient)
+
+
+Server Software:        
+Server Hostname:        64.23.188.215
+Server Port:            4221
+
+Document Path:          /echo/hello
+Document Length:        5 bytes
+
+Concurrency Level:      500
+Time taken for tests:   29.548 seconds
+Complete requests:      10000
+Failed requests:        1020
+   (Connect: 0, Receive: 510, Length: 510, Exceptions: 0)
+Total transferred:      654810 bytes
+HTML transferred:       47450 bytes
+Requests per second:    338.43 [#/sec] (mean)
+Time per request:       1477.390 [ms] (mean)
+Time per request:       2.955 [ms] (mean, across all concurrent requests)
+Transfer rate:          21.64 [Kbytes/sec] received
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:       21  226 162.4    141    2109
+Processing:    46  538 1142.4    146   15772
+Waiting:        0  484 1050.4    137   15772
+Total:         67  764 1154.4    435   15914
+
+Percentage of the requests served within a certain time (ms)
+  50%    435
+  66%    565
+  75%    738
+  80%    853
+  90%   1471
+  95%   2500
+  98%   4465
+  99%   5976
+ 100%  15914 (longest request)
+Run 2:
+This is ApacheBench, Version 2.3 <$Revision: 1913912 $>
+Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+Licensed to The Apache Software Foundation, http://www.apache.org/
+
+Benchmarking 64.23.188.215 (be patient)
+Total of 9999 requests completed
+Run 3:
+This is ApacheBench, Version 2.3 <$Revision: 1913912 $>
+Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+Licensed to The Apache Software Foundation, http://www.apache.org/
+
+Benchmarking 64.23.188.215 (be patient)
+
+
+Server Software:        
+Server Hostname:        64.23.188.215
+Server Port:            4221
+
+Document Path:          /echo/hello
+Document Length:        5 bytes
+
+Concurrency Level:      500
+Time taken for tests:   32.214 seconds
+Complete requests:      10000
+Failed requests:        736
+   (Connect: 0, Receive: 368, Length: 368, Exceptions: 0)
+Total transferred:      664608 bytes
+HTML transferred:       48160 bytes
+Requests per second:    310.43 [#/sec] (mean)
+Time per request:       1610.689 [ms] (mean)
+Time per request:       3.221 [ms] (mean, across all concurrent requests)
+Transfer rate:          20.15 [Kbytes/sec] received
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:       24  297 419.1    196    6730
+Processing:    56  465 1170.4    133   25532
+Waiting:        0  424 1076.0    130   25531
+Total:         87  762 1230.3    431   25663
+
+Percentage of the requests served within a certain time (ms)
+  50%    431
+  66%    588
+  75%    769
+  80%    862
+  90%   1464
+  95%   2356
+  98%   4029
+  99%   6069
+ 100%  25663 (longest request)
+Run 4:
+This is ApacheBench, Version 2.3 <$Revision: 1913912 $>
+Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+Licensed to The Apache Software Foundation, http://www.apache.org/
+
+Benchmarking 64.23.188.215 (be patient)
+
+
+Server Software:        
+Server Hostname:        64.23.188.215
+Server Port:            4221
+
+Document Path:          /echo/hello
+Document Length:        5 bytes
+
+Concurrency Level:      500
+Time taken for tests:   28.248 seconds
+Complete requests:      10000
+Failed requests:        646
+   (Connect: 0, Receive: 323, Length: 323, Exceptions: 0)
+Total transferred:      667713 bytes
+HTML transferred:       48385 bytes
+Requests per second:    354.01 [#/sec] (mean)
+Time per request:       1412.382 [ms] (mean)
+Time per request:       2.825 [ms] (mean, across all concurrent requests)
+Transfer rate:          23.08 [Kbytes/sec] received
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:       21  295 460.8    196   12938
+Processing:    60  457 1062.6    133   22464
+Waiting:        0  428 1012.7    128   22464
+Total:         82  752 1144.3    429   22741
+
+Percentage of the requests served within a certain time (ms)
+  50%    429
+  66%    590
+  75%    774
+  80%    869
+  90%   1447
+  95%   2389
+  98%   4006
+  99%   6436
+ 100%  22741 (longest request)

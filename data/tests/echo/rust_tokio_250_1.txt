@@ -10,34 +10,34 @@ Server Software:
 Server Hostname:        64.23.188.215
 Server Port:            4221
 
-Document Path:          /echo/hellp
+Document Path:          /echo/hello
 Document Length:        5 bytes
 
 Concurrency Level:      250
-Time taken for tests:   19.527 seconds
+Time taken for tests:   20.225 seconds
 Complete requests:      10000
 Failed requests:        0
 Total transferred:      800000 bytes
 HTML transferred:       50000 bytes
-Requests per second:    512.12 [#/sec] (mean)
-Time per request:       488.164 [ms] (mean)
-Time per request:       1.953 [ms] (mean, across all concurrent requests)
-Transfer rate:          40.01 [Kbytes/sec] received
+Requests per second:    494.44 [#/sec] (mean)
+Time per request:       505.619 [ms] (mean)
+Time per request:       2.022 [ms] (mean, across all concurrent requests)
+Transfer rate:          38.63 [Kbytes/sec] received
 
 Connection Times (ms)
               min  mean[+/-sd] median   max
-Connect:       24  177 175.5    101    1961
-Processing:    38  206 371.4    104    9471
-Waiting:       26  205 370.8    104    9471
-Total:         63  383 411.8    223    9713
+Connect:       21  247 461.4     92    7139
+Processing:    29  177 330.5     96    8389
+Waiting:       19  175 328.0     96    8389
+Total:         50  423 579.1    196    8464
 
 Percentage of the requests served within a certain time (ms)
-  50%    223
-  66%    415
-  75%    462
-  80%    480
-  90%    752
-  95%    968
-  98%   1351
-  99%   1697
- 100%   9713 (longest request)
+  50%    196
+  66%    239
+  75%    336
+  80%    444
+  90%   1178
+  95%   1402
+  98%   2214
+  99%   2786
+ 100%   8464 (longest request)

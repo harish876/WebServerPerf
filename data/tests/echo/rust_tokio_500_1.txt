@@ -4,4 +4,40 @@ Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
 Licensed to The Apache Software Foundation, http://www.apache.org/
 
 Benchmarking 64.23.188.215 (be patient)
-Total of 9999 requests completed
+
+
+Server Software:        
+Server Hostname:        64.23.188.215
+Server Port:            4221
+
+Document Path:          /echo/hello
+Document Length:        5 bytes
+
+Concurrency Level:      500
+Time taken for tests:   16.852 seconds
+Complete requests:      10000
+Failed requests:        0
+Total transferred:      800000 bytes
+HTML transferred:       50000 bytes
+Requests per second:    593.41 [#/sec] (mean)
+Time per request:       842.586 [ms] (mean)
+Time per request:       1.685 [ms] (mean, across all concurrent requests)
+Transfer rate:          46.36 [Kbytes/sec] received
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:       17  542 717.6    106    7134
+Processing:    48  218 481.7     96   13557
+Waiting:       21  217 481.7     96   13557
+Total:         66  760 853.1    298   13687
+
+Percentage of the requests served within a certain time (ms)
+  50%    298
+  66%   1137
+  75%   1172
+  80%   1190
+  90%   1913
+  95%   2203
+  98%   3189
+  99%   4165
+ 100%  13687 (longest request)
