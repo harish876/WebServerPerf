@@ -45,9 +45,9 @@ def main(language, mode, num_runs, endpoint):
             if median_times:
                 mean_of_medians = statistics.mean(median_times)
                 mean_throughput = statistics.mean(throughputs) if throughputs else 0
-                print(f"Median times for {file_name}: {median_times}")
+                #print(f"Median times for {file_name}: {median_times}")
                 print(f"Mean of median times for concurrency level {concurrency}: {mean_of_medians}")
-                print(f"Throughputs for {file_name}: {throughputs}")
+                #print(f"Throughputs for {file_name}: {throughputs}")
                 print(f"Mean throughput for concurrency level {concurrency}: {mean_throughput} Requests/sec")
             else:
                 print(f"No median times found for {file_name}.")
