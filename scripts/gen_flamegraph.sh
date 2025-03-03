@@ -12,12 +12,12 @@ PROFILE_NAME=$2
 OUTPUT_DIR="../data/profiles"
 
 # Define the input and output file paths
-INPUT_FILE="${OUTPUT_DIR}/out_${SERVER_NAME}_${PROFILE_NAME}.profile-folded"
+INPUT_FILE="${OUTPUT_DIR}/out_${SERVER_NAME}_${PROFILE_NAME}"
 FLAMEGRAPH_FILE="${OUTPUT_DIR}/flamegraph_${SERVER_NAME}_${PROFILE_NAME}.svg"
 
 # Generate the flame graph
 echo "Generating flame graph..."
-../../FlameGraph/flamegraph.pl "$INPUT_FILE" > "$FLAMEGRAPH_FILE"
+nperf flamegraph "$INPUT_FILE" > "$FLAMEGRAPH_FILE"
 
 # Check if the flame graph was created
 if [ ! -f "$FLAMEGRAPH_FILE" ]; then

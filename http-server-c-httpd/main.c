@@ -28,6 +28,7 @@
 #include "yyjson.h"
 #include <microhttpd.h>
 #include <netinet/in.h>
+#include <signal.h>
 #include <stdlib.h>
 
 #define PAGE                                                                   \
@@ -168,6 +169,8 @@ void request_completed(void *cls, struct MHD_Connection *connection,
   }
   *con_cls = NULL;
 }
+
+void handler(int sig) { printf("Received signal: %d\n", sig); }
 
 int main(int argc, char *const *argv) {
   struct MHD_Daemon *d;

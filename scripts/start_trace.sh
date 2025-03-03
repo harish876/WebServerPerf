@@ -22,8 +22,10 @@ if [ -z "$PID" ]; then
     exit 1
 fi
 
-# Start the eBPF profiler and pin it to CPU core 0
-echo "Starting eBPF profiler for $SERVER_NAME on CPU core 0 for $DURATION seconds..."
-sudo profile-bpfcc -f -F 49 --pid $PID $DURATION > $OUTPUT_DIR/out_${SERVER_NAME}_${PROFILE_NAME}.profile-folded
+# Using nperf for now from koute/not-perf
+# Start the nperf profiler and pin it to CPU core 0
+echo "Starting nperf profiler for $SERVER_NAME on CPU core 0 for $DURATION seconds..."
+# sudo profile-bpfcc -f -F 99 --pid $PID $DURATION > $OUTPUT_DIR/out_${SERVER_NAME}_${PROFILE_NAME}.profile-folded
+nperf record -p $PID --do-not-send-sigstop -o $OUTPUT_DIR/out_${SERVER_NAME}_${PROFILE_NAME}
 
-echo "Profiling complete. Results saved to out_${SERVER_NAME}.profile-folded."
+echo "Profiling complete. Results saved to out_${SERVER_NAME}_${PROFILE_NAME}"

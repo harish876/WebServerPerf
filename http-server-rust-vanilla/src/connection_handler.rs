@@ -36,8 +36,8 @@ impl HandleConnection for TcpStream {
         loop {
             buffer.clear();
             if buf_reader.read_line(&mut buffer).is_err() {
-                eprintln!("Failed to read header line");
-                return;
+                println!("Failed to read header line");
+                break;
             }
             if buffer == "\r\n" {
                 break;
@@ -84,9 +84,10 @@ impl HandleConnection for TcpStream {
                                 modified_body.len(),
                                 modified_body
                             );
+                            println!("Response: {:?}", modified_body);
                         }
                         Err(e) => {
-                            eprintln!("Failed to parse JSON body: {}", e);
+                            println!("Failed to parse JSON body: {}", e);
                             response = "HTTP/1.1 400 Bad Request\r\n\r\n".to_string();
                         }
                     }
