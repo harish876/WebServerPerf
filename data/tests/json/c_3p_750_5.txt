@@ -4,276 +4,42 @@ Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
 Licensed to The Apache Software Foundation, http://www.apache.org/
 
 Benchmarking 64.23.188.215 (be patient)
-
-
-Server Software:        
-Server Hostname:        64.23.188.215
-Server Port:            4221
-
-Document Path:          /json
-Document Length:        23 bytes
-
-Concurrency Level:      750
-Time taken for tests:   19.890 seconds
-Complete requests:      5000
-Failed requests:        0
-Total transferred:      655000 bytes
-Total body sent:        880000
-HTML transferred:       115000 bytes
-Requests per second:    251.39 [#/sec] (mean)
-Time per request:       2983.470 [ms] (mean)
-Time per request:       3.978 [ms] (mean, across all concurrent requests)
-Transfer rate:          32.16 [Kbytes/sec] received
-                        43.21 kb/s sent
-                        75.37 kb/s total
-
-Connection Times (ms)
-              min  mean[+/-sd] median   max
-Connect:       26  572 815.9    140    5125
-Processing:    55  576 1147.7    151   15250
-Waiting:       22  535 1105.6    147   15250
-Total:         82 1148 1423.5    579   16386
-
-Percentage of the requests served within a certain time (ms)
-  50%    579
-  66%   1258
-  75%   1412
-  80%   1768
-  90%   2578
-  95%   3658
-  98%   5335
-  99%   7161
- 100%  16386 (longest request)
+Total of 4212 requests completed
 Run 2:
 This is ApacheBench, Version 2.3 <$Revision: 1913912 $>
 Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
 Licensed to The Apache Software Foundation, http://www.apache.org/
 
 Benchmarking 64.23.188.215 (be patient)
-
-
-Server Software:        
-Server Hostname:        64.23.188.215
-Server Port:            4221
-
-Document Path:          /json
-Document Length:        23 bytes
-
-Concurrency Level:      750
-Time taken for tests:   23.488 seconds
-Complete requests:      5000
-Failed requests:        0
-Total transferred:      655000 bytes
-Total body sent:        880000
-HTML transferred:       115000 bytes
-Requests per second:    212.87 [#/sec] (mean)
-Time per request:       3523.207 [ms] (mean)
-Time per request:       4.698 [ms] (mean, across all concurrent requests)
-Transfer rate:          27.23 [Kbytes/sec] received
-                        36.59 kb/s sent
-                        63.82 kb/s total
-
-Connection Times (ms)
-              min  mean[+/-sd] median   max
-Connect:       26  680 992.5    141    7163
-Processing:    59  813 1680.2    155   23140
-Waiting:       25  759 1653.6    149   23140
-Total:         92 1493 1999.4    644   23275
-
-Percentage of the requests served within a certain time (ms)
-  50%    644
-  66%   1309
-  75%   1941
-  80%   2291
-  90%   3714
-  95%   5280
-  98%   7700
-  99%  10145
- 100%  23275 (longest request)
+Total of 4859 requests completed
 Run 3:
 This is ApacheBench, Version 2.3 <$Revision: 1913912 $>
 Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
 Licensed to The Apache Software Foundation, http://www.apache.org/
 
 Benchmarking 64.23.188.215 (be patient)
-
-
-Server Software:        
-Server Hostname:        64.23.188.215
-Server Port:            4221
-
-Document Path:          /json
-Document Length:        23 bytes
-
-Concurrency Level:      750
-Time taken for tests:   17.941 seconds
-Complete requests:      5000
-Failed requests:        0
-Total transferred:      655000 bytes
-Total body sent:        880000
-HTML transferred:       115000 bytes
-Requests per second:    278.69 [#/sec] (mean)
-Time per request:       2691.198 [ms] (mean)
-Time per request:       3.588 [ms] (mean, across all concurrent requests)
-Transfer rate:          35.65 [Kbytes/sec] received
-                        47.90 kb/s sent
-                        83.55 kb/s total
-
-Connection Times (ms)
-              min  mean[+/-sd] median   max
-Connect:       25  580 866.0    136    7133
-Processing:    63  555 985.0    151   15315
-Waiting:       26  516 960.5    144   15315
-Total:         91 1135 1365.6    588   17451
-
-Percentage of the requests served within a certain time (ms)
-  50%    588
-  66%   1252
-  75%   1424
-  80%   1762
-  90%   2664
-  95%   3630
-  98%   4849
-  99%   6548
- 100%  17451 (longest request)
+Total of 4814 requests completed
 Run 4:
 This is ApacheBench, Version 2.3 <$Revision: 1913912 $>
 Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
 Licensed to The Apache Software Foundation, http://www.apache.org/
 
 Benchmarking 64.23.188.215 (be patient)
-
-
-Server Software:        
-Server Hostname:        64.23.188.215
-Server Port:            4221
-
-Document Path:          /json
-Document Length:        23 bytes
-
-Concurrency Level:      750
-Time taken for tests:   35.271 seconds
-Complete requests:      5000
-Failed requests:        0
-Total transferred:      655000 bytes
-Total body sent:        880000
-HTML transferred:       115000 bytes
-Requests per second:    141.76 [#/sec] (mean)
-Time per request:       5290.617 [ms] (mean)
-Time per request:       7.054 [ms] (mean, across all concurrent requests)
-Transfer rate:          18.14 [Kbytes/sec] received
-                        24.37 kb/s sent
-                        42.50 kb/s total
-
-Connection Times (ms)
-              min  mean[+/-sd] median   max
-Connect:       21  637 995.4    138    7242
-Processing:    60  516 1123.6    144   35171
-Waiting:       21  484 1103.6    141   35171
-Total:         87 1153 1516.4    511   35220
-
-Percentage of the requests served within a certain time (ms)
-  50%    511
-  66%   1244
-  75%   1364
-  80%   1818
-  90%   2897
-  95%   4099
-  98%   5340
-  99%   7143
- 100%  35220 (longest request)
+Total of 4879 requests completed
 Run 5:
 This is ApacheBench, Version 2.3 <$Revision: 1913912 $>
 Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
 Licensed to The Apache Software Foundation, http://www.apache.org/
 
 Benchmarking 64.23.188.215 (be patient)
-
-
-Server Software:        
-Server Hostname:        64.23.188.215
-Server Port:            4221
-
-Document Path:          /json
-Document Length:        23 bytes
-
-Concurrency Level:      750
-Time taken for tests:   16.070 seconds
-Complete requests:      5000
-Failed requests:        0
-Total transferred:      655000 bytes
-Total body sent:        880000
-HTML transferred:       115000 bytes
-Requests per second:    311.14 [#/sec] (mean)
-Time per request:       2410.482 [ms] (mean)
-Time per request:       3.214 [ms] (mean, across all concurrent requests)
-Transfer rate:          39.80 [Kbytes/sec] received
-                        53.48 kb/s sent
-                        93.28 kb/s total
-
-Connection Times (ms)
-              min  mean[+/-sd] median   max
-Connect:       28  567 844.3    136    7154
-Processing:    51  573 1062.7    145   12717
-Waiting:       21  537 1048.4    141   12717
-Total:         92 1139 1421.5    566   14851
-
-Percentage of the requests served within a certain time (ms)
-  50%    566
-  66%   1222
-  75%   1304
-  80%   1667
-  90%   2915
-  95%   3927
-  98%   5312
-  99%   7077
- 100%  14851 (longest request)
+Total of 4842 requests completed
 Run 1:
 This is ApacheBench, Version 2.3 <$Revision: 1913912 $>
 Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
 Licensed to The Apache Software Foundation, http://www.apache.org/
 
 Benchmarking 64.23.188.215 (be patient)
-
-
-Server Software:        
-Server Hostname:        64.23.188.215
-Server Port:            4221
-
-Document Path:          /json
-Document Length:        23 bytes
-
-Concurrency Level:      750
-Time taken for tests:   29.640 seconds
-Complete requests:      5000
-Failed requests:        0
-Total transferred:      655000 bytes
-Total body sent:        880000
-HTML transferred:       115000 bytes
-Requests per second:    168.69 [#/sec] (mean)
-Time per request:       4446.039 [ms] (mean)
-Time per request:       5.928 [ms] (mean, across all concurrent requests)
-Transfer rate:          21.58 [Kbytes/sec] received
-                        28.99 kb/s sent
-                        50.57 kb/s total
-
-Connection Times (ms)
-              min  mean[+/-sd] median   max
-Connect:       26  571 810.5    137    6181
-Processing:    57  528 1022.3    145   28498
-Waiting:       17  486 1005.9    141   28498
-Total:         83 1099 1334.4    580   29578
-
-Percentage of the requests served within a certain time (ms)
-  50%    580
-  66%   1251
-  75%   1359
-  80%   1675
-  90%   2636
-  95%   3506
-  98%   4442
-  99%   5533
- 100%  29578 (longest request)
+Total of 4845 requests completed
 Run 2:
 This is ApacheBench, Version 2.3 <$Revision: 1913912 $>
 Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
@@ -290,82 +56,44 @@ Document Path:          /json
 Document Length:        23 bytes
 
 Concurrency Level:      750
-Time taken for tests:   23.475 seconds
+Time taken for tests:   128.976 seconds
 Complete requests:      5000
-Failed requests:        0
-Total transferred:      655000 bytes
+Failed requests:        1074
+   (Connect: 0, Receive: 528, Length: 546, Exceptions: 0)
+Total transferred:      585177 bytes
 Total body sent:        880000
-HTML transferred:       115000 bytes
-Requests per second:    212.99 [#/sec] (mean)
-Time per request:       3521.320 [ms] (mean)
-Time per request:       4.695 [ms] (mean, across all concurrent requests)
-Transfer rate:          27.25 [Kbytes/sec] received
-                        36.61 kb/s sent
-                        63.85 kb/s total
+HTML transferred:       102741 bytes
+Requests per second:    38.77 [#/sec] (mean)
+Time per request:       19346.375 [ms] (mean)
+Time per request:       25.795 [ms] (mean, across all concurrent requests)
+Transfer rate:          4.43 [Kbytes/sec] received
+                        6.66 kb/s sent
+                        11.09 kb/s total
 
 Connection Times (ms)
               min  mean[+/-sd] median   max
-Connect:       36  583 854.9    139    7132
-Processing:    54  579 1106.4    147   21311
-Waiting:       18  540 1053.3    143   21311
-Total:         97 1162 1437.0    588   21406
+Connect:        0  257 400.5    177    7935
+Processing:    69 1254 4305.9    297  121376
+Waiting:        0  978 1949.7    266   26630
+Total:         92 1511 4315.5    549  121376
 
 Percentage of the requests served within a certain time (ms)
-  50%    588
-  66%   1251
-  75%   1335
-  80%   1751
-  90%   2965
-  95%   3721
-  98%   5704
-  99%   7042
- 100%  21406 (longest request)
+  50%    549
+  66%    962
+  75%   1457
+  80%   1892
+  90%   3637
+  95%   5481
+  98%   7887
+  99%  10301
+ 100%  121376 (longest request)
 Run 3:
 This is ApacheBench, Version 2.3 <$Revision: 1913912 $>
 Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
 Licensed to The Apache Software Foundation, http://www.apache.org/
 
 Benchmarking 64.23.188.215 (be patient)
-
-
-Server Software:        
-Server Hostname:        64.23.188.215
-Server Port:            4221
-
-Document Path:          /json
-Document Length:        23 bytes
-
-Concurrency Level:      750
-Time taken for tests:   27.954 seconds
-Complete requests:      5000
-Failed requests:        0
-Total transferred:      655000 bytes
-Total body sent:        880000
-HTML transferred:       115000 bytes
-Requests per second:    178.86 [#/sec] (mean)
-Time per request:       4193.129 [ms] (mean)
-Time per request:       5.591 [ms] (mean, across all concurrent requests)
-Transfer rate:          22.88 [Kbytes/sec] received
-                        30.74 kb/s sent
-                        53.62 kb/s total
-
-Connection Times (ms)
-              min  mean[+/-sd] median   max
-Connect:       19  627 868.7    138    5168
-Processing:    44  707 1243.8    158   24571
-Waiting:       22  663 1227.7    148   24571
-Total:        114 1335 1552.8    655   24709
-
-Percentage of the requests served within a certain time (ms)
-  50%    655
-  66%   1303
-  75%   1787
-  80%   2269
-  90%   3329
-  95%   4260
-  98%   5523
-  99%   7128
- 100%  24709 (longest request)
+Total of 4873 requests completed
 Run 4:
 This is ApacheBench, Version 2.3 <$Revision: 1913912 $>
 Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
@@ -382,79 +110,41 @@ Document Path:          /json
 Document Length:        23 bytes
 
 Concurrency Level:      750
-Time taken for tests:   19.646 seconds
+Time taken for tests:   128.620 seconds
 Complete requests:      5000
-Failed requests:        0
-Total transferred:      655000 bytes
+Failed requests:        969
+   (Connect: 0, Receive: 482, Length: 487, Exceptions: 0)
+Total transferred:      591334 bytes
 Total body sent:        880000
-HTML transferred:       115000 bytes
-Requests per second:    254.50 [#/sec] (mean)
-Time per request:       2946.928 [ms] (mean)
-Time per request:       3.929 [ms] (mean, across all concurrent requests)
-Transfer rate:          32.56 [Kbytes/sec] received
-                        43.74 kb/s sent
-                        76.30 kb/s total
+HTML transferred:       103822 bytes
+Requests per second:    38.87 [#/sec] (mean)
+Time per request:       19293.073 [ms] (mean)
+Time per request:       25.724 [ms] (mean, across all concurrent requests)
+Transfer rate:          4.49 [Kbytes/sec] received
+                        6.68 kb/s sent
+                        11.17 kb/s total
 
 Connection Times (ms)
               min  mean[+/-sd] median   max
-Connect:       28  563 767.9    138    5125
-Processing:    52  603 1131.6    149   18475
-Waiting:       24  550 1074.5    143   18475
-Total:         92 1166 1404.3    606   19573
+Connect:        0  243 360.6    175    7668
+Processing:    59 1225 3932.1    296  120918
+Waiting:        0  965 1892.4    277   19367
+Total:         95 1467 3944.0    543  120918
 
 Percentage of the requests served within a certain time (ms)
-  50%    606
-  66%   1255
-  75%   1429
-  80%   1762
-  90%   2702
-  95%   3641
-  98%   5417
-  99%   7212
- 100%  19573 (longest request)
+  50%    543
+  66%    928
+  75%   1395
+  80%   1974
+  90%   3403
+  95%   5546
+  98%   8646
+  99%  10972
+ 100%  120918 (longest request)
 Run 5:
 This is ApacheBench, Version 2.3 <$Revision: 1913912 $>
 Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
 Licensed to The Apache Software Foundation, http://www.apache.org/
 
 Benchmarking 64.23.188.215 (be patient)
-
-
-Server Software:        
-Server Hostname:        64.23.188.215
-Server Port:            4221
-
-Document Path:          /json
-Document Length:        23 bytes
-
-Concurrency Level:      750
-Time taken for tests:   37.785 seconds
-Complete requests:      5000
-Failed requests:        0
-Total transferred:      655000 bytes
-Total body sent:        880000
-HTML transferred:       115000 bytes
-Requests per second:    132.33 [#/sec] (mean)
-Time per request:       5667.696 [ms] (mean)
-Time per request:       7.557 [ms] (mean, across all concurrent requests)
-Transfer rate:          16.93 [Kbytes/sec] received
-                        22.74 kb/s sent
-                        39.67 kb/s total
-
-Connection Times (ms)
-              min  mean[+/-sd] median   max
-Connect:       22  680 911.9    170    5132
-Processing:    27  647 1320.2    180   36459
-Waiting:       26  594 1252.1    179   36459
-Total:        169 1327 1672.7    680   37676
-
-Percentage of the requests served within a certain time (ms)
-  50%    680
-  66%   1319
-  75%   1750
-  80%   2177
-  90%   3267
-  95%   4264
-  98%   5903
-  99%   7196
- 100%  37676 (longest request)
+Total of 4129 requests completed

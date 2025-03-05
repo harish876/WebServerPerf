@@ -28,10 +28,10 @@ def get_mean_of_medians_and_rps(language, mode, num_runs, endpoint):
 
 def plot_comparison(rust_means, c_means, rust_rps, c_rps, mode, num_runs, endpoint):
     concurrency_levels = sorted(rust_means.keys())
-    rust_values = [rust_means[concurrency] for concurrency in concurrency_levels]
-    c_values = [c_means[concurrency] for concurrency in concurrency_levels]
-    rust_rps_values = [rust_rps[concurrency] for concurrency in concurrency_levels]
-    c_rps_values = [c_rps[concurrency] for concurrency in concurrency_levels]
+    rust_values = [rust_means[concurrency] if concurrency in rust_means else 0 for concurrency in concurrency_levels]
+    c_values = [c_means[concurrency] if concurrency in c_means else 0 for concurrency in concurrency_levels]
+    rust_rps_values = [rust_rps[concurrency] if concurrency in rust_rps else 0 for concurrency in concurrency_levels]
+    c_rps_values = [c_rps[concurrency] if concurrency in c_rps else 0 for concurrency in concurrency_levels]
 
     bar_width = 0.35
     index = np.arange(len(concurrency_levels))

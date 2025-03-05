@@ -35,7 +35,7 @@ for run in $(seq 1 $NUM_RUNS); do
     fi
     OUTPUT_FILE="${OUTPUT_DIR}/${LANGUAGE}_${MODE}_${concurrency}_${NUM_RUNS}.txt"
     echo "Run $run:" >> "$OUTPUT_FILE"
-    ab -n $TOTAL_REQUESTS -r -c "$concurrency" -T "application/json" -p payload.json -s 30 "$URL" >> "$OUTPUT_FILE"
+    ab -n $TOTAL_REQUESTS -r -c "$concurrency" -T "application/json" -p payload.json -s 300 "$URL" >> "$OUTPUT_FILE"
     sleep 20
   done
   echo "Completed run $run. Waiting for 20 seconds before the next run..."
