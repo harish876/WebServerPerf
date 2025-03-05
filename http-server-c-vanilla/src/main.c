@@ -12,10 +12,9 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
-#define POOL_SIZE 32
-#define QUEUE_SIZE 128
+#define POOL_SIZE 2
 #define MAX_EVENTS 10
-#define BACKLOG 200 // how many pending connections queue will hold
+#define BACKLOG 128 // how many pending connections queue will hold
 
 // Global client counter
 int client_counter = 0;
@@ -43,9 +42,15 @@ int set_non_blocking(int sockfd) {
   return 0;
 }
 
+void handle_task(void *arg) {
+  int conn = *(int *)arg;
+  free(arg); // Free the allocated memory for the connection descriptor
+  handle_connection(conn);
+}
+
 void use_thread_pool(int server_fd) {
   thread_pool_t pool;
-  thread_pool_init(&pool, POOL_SIZE, QUEUE_SIZE, handle_connection);
+  thread_pool_init(&pool, POOL_SIZE);
 
   struct sockaddr_in client_addr;
   socklen_t client_addr_len;
@@ -62,11 +67,14 @@ void use_thread_pool(int server_fd) {
     client_counter++;
     int current_client = client_counter;
 
-    // Create a task and add it to the task queue
-    task_t task = {.conn = conn};
-    task_queue_push(&pool.task_queue, task);
+    // Allocate memory for the connection descriptor and create a task
+    int *conn_ptr = malloc(sizeof(int));
+    *conn_ptr = conn;
 
-    printf("Client %d connected\n", current_client);
+    // Add the task to the task queue
+    task_queue_push(&pool.task_queue, handle_task, conn_ptr);
+
+    // printf("Client %d connected\n", current_client);
   }
 
   thread_pool_destroy(&pool);
@@ -96,7 +104,7 @@ void use_threads(int server_fd) {
     pthread_create(&tid, NULL, handle_connection_wrapper, conn_ptr);
     pthread_detach(tid); // Detach the thread to avoid memory leaks
 
-    printf("Client %d connected\n", current_client);
+    // printf("Client %d connected\n", current_client);
   }
 }
 

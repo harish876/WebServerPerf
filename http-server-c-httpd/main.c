@@ -28,12 +28,13 @@
 #include "yyjson.h"
 #include <microhttpd.h>
 #include <netinet/in.h>
-#include <signal.h>
 #include <stdlib.h>
 
 #define PAGE                                                                   \
   "<html><head><title>libmicrohttpd demo</title></head><body>libmicrohttpd "   \
   "demo</body></html>"
+
+#define PORT 4221
 
 struct connection_info_struct {
   int connectiontype;
@@ -176,32 +177,27 @@ int main(int argc, char *const *argv) {
   struct MHD_Daemon *d;
   struct sockaddr_in serv_addr;
 
-  if (argc != 2) {
-    printf("%s PORT\n", argv[0]);
-    return 1;
-  }
-
   // Set up the sockaddr_in structure to bind to 0.0.0.0
   memset(&serv_addr, 0, sizeof(serv_addr));
   serv_addr.sin_family = AF_INET;
   serv_addr.sin_addr.s_addr = htonl(INADDR_ANY); // 0.0.0.0
-  serv_addr.sin_port = htons(atoi(argv[1]));
+  serv_addr.sin_port = htons(PORT);
 
   // d = MHD_start_daemon(MHD_USE_EPOLL_INTERNALLY | MHD_USE_DEBUG,
   // atoi(argv[1]),
   //                      NULL, NULL, &handle_request, PAGE,
   //                      MHD_OPTION_SOCK_ADDR, &serv_addr, MHD_OPTION_END);
-  d = MHD_start_daemon(MHD_USE_EPOLL_INTERNALLY | MHD_USE_DEBUG, atoi(argv[1]),
+  d = MHD_start_daemon(MHD_USE_EPOLL_INTERNAL_THREAD | MHD_USE_DEBUG, PORT,
                        NULL, NULL, &handle_request, PAGE, MHD_OPTION_SOCK_ADDR,
                        &serv_addr, MHD_OPTION_NOTIFY_COMPLETED,
                        request_completed, NULL, MHD_OPTION_CONNECTION_TIMEOUT,
-                       (unsigned int)120, MHD_OPTION_END);
+                       (unsigned int)10, MHD_OPTION_END);
   if (d == NULL) {
     fprintf(stdout, "Failed to start daemon\n");
     return 1;
   }
 
-  printf("Server started on port %s...\n", argv[1]);
+  printf("Server started on port %d...\n", PORT);
   (void)getc(stdin);
   MHD_stop_daemon(d);
   return 0;
