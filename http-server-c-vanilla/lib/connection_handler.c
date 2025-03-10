@@ -1,4 +1,5 @@
 #include "connection_handler.h"
+#include "yyjson.h"
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -29,6 +30,82 @@ int on_message_begin(http_parser *parser) {
   return 0;
 }
 #endif
+
+void handle_echo_endpoint(int conn, const char *content) {
+  size_t contentLength = strlen(content);
+  char response[1024];
+  int response_length = snprintf(response, sizeof(response),
+                                 "HTTP/1.1 200 OK\r\nContent-Type: "
+                                 "text/plain\r\nContent-Length: %zu\r\n\r\n%s",
+                                 contentLength, content);
+  send(conn, response, response_length, 0);
+}
+
+void handle_json_endpoint(int conn, const char *body) {
+  yyjson_doc *doc = yyjson_read(body, strlen(body), 0);
+  if (!doc) {
+    const char *response = "HTTP/1.1 400 Bad Request\r\n"
+                           "Content-Type: application/json\r\n"
+                           "Content-Length: 15\r\n"
+                           "\r\n"
+                           "{\"error\":\"Invalid JSON\"}";
+    send(conn, response, strlen(response), 0);
+    close(conn);
+    return;
+  }
+
+  yyjson_val *root = yyjson_doc_get_root(doc);
+  yyjson_val *id_val = yyjson_obj_get(root, "id");
+
+  if (id_val && yyjson_is_uint(id_val)) {
+    uint64_t id = yyjson_get_uint(id_val);
+    id++;
+    yyjson_mut_doc *mut_doc = yyjson_doc_mut_copy(doc, NULL);
+    yyjson_mut_val *mut_root = yyjson_mut_doc_get_root(mut_doc);
+
+    // Update the existing id field
+    yyjson_mut_val *mut_id_val = yyjson_mut_obj_get(mut_root, "id");
+    yyjson_mut_set_uint(mut_id_val, id);
+
+    char *json_response = yyjson_mut_write(mut_doc, 0, NULL);
+    yyjson_doc_free(doc);
+    yyjson_mut_doc_free(mut_doc);
+    char response[1024];
+
+    snprintf(response, sizeof(response),
+             "HTTP/1.1 200 OK\r\n"
+             "Content-Type: application/json\r\n"
+             "Content-Length: %zu\r\n"
+             "\r\n"
+             "%s",
+             strlen(json_response), json_response);
+    send(conn, response, strlen(response), 0);
+    free(json_response);
+  } else {
+    yyjson_doc_free(doc);
+    char response[1024];
+    char *json_response = "{\"error\":\"Invalid Object. Missing 'id' field or "
+                          "'id' field should be int\"}";
+    snprintf(response, sizeof(response),
+             "HTTP/1.1 400 Bad Request\r\n"
+             "Content-Type: application/json\r\n"
+             "Content-Length: %zu\r\n"
+             "\r\n"
+             "%s",
+             strlen(json_response), json_response);
+    send(conn, response, strlen(response), 0);
+  }
+}
+
+void handle_root_endpoint(int conn) {
+  char response[] = "HTTP/1.1 200 OK\r\n\r\n";
+  send(conn, response, sizeof(response) - 1, 0);
+}
+
+void handle_not_found_endpoint(int conn) {
+  char response[] = "HTTP/1.1 404 Not Found\r\n\r\n";
+  send(conn, response, sizeof(response) - 1, 0);
+}
 
 void handle_connection(int conn) {
   uint8_t buff[1024];
@@ -67,44 +144,33 @@ void handle_connection(int conn) {
 
   if (strncmp(req_info.path, "/echo/", 6) == 0 &&
       strcmp(req_info.method, "GET") == 0) {
-    char *content =
-        req_info.path + 6; // 6 because that's the size of "/echo/" string
-    size_t contentLength = strlen(content);
-    char response[1024];
-    int response_length =
-        snprintf(response, sizeof(response),
-                 "HTTP/1.1 200 OK\r\nContent-Type: "
-                 "text/plain\r\nContent-Length: %zu\r\n\r\n%s",
-                 contentLength, content);
-    send(conn, response, response_length, 0);
+    handle_echo_endpoint(conn, req_info.path + 6);
+  } else if (strcmp(req_info.path, "/json") == 0 &&
+             strcmp(req_info.method, "POST") == 0) {
+    handle_json_endpoint(conn, req_info.body);
   } else if (strcmp(req_info.path, "/") == 0) {
-    char response[] = "HTTP/1.1 200 OK\r\n\r\n";
-    send(conn, response, sizeof(response) - 1, 0);
+    handle_root_endpoint(conn);
   } else {
-    char response[] = "HTTP/1.1 404 Not Found\r\n\r\n";
-    send(conn, response, sizeof(response) - 1, 0);
+    handle_not_found_endpoint(conn);
   }
 #else
   char method[16], path[1024];
   sscanf((char *)buff, "%s %s", method, path);
 
-  // printf("Methods: %s Path: %s\n", method, path);
   if (strncmp(path, "/echo/", 6) == 0 && strcmp(method, "GET") == 0) {
-    char *content = path + 6; // 6 because that's the size of "/echo/" string
-    size_t contentLength = strlen(content);
-    char response[1024];
-    int response_length =
-        snprintf(response, sizeof(response),
-                 "HTTP/1.1 200 OK\r\nContent-Type: "
-                 "text/plain\r\nContent-Length: %zu\r\n\r\n%s",
-                 contentLength, content);
-    send(conn, response, response_length, 0);
+    handle_echo_endpoint(conn, path + 6);
+  } else if (strcmp(path, "/json") == 0 && strcmp(method, "POST") == 0) {
+    char *body_start = strstr((char *)buff, "\r\n\r\n");
+    if (body_start) {
+      body_start += 4; // Skip the "\r\n\r\n" sequence
+      handle_json_endpoint(conn, body_start);
+    } else {
+      handle_not_found_endpoint(conn);
+    }
   } else if (strcmp(path, "/") == 0) {
-    char response[] = "HTTP/1.1 200 OK\r\n\r\n";
-    send(conn, response, sizeof(response) - 1, 0);
+    handle_root_endpoint(conn);
   } else {
-    char response[] = "HTTP/1.1 404 Not Found\r\n\r\n";
-    send(conn, response, sizeof(response) - 1, 0);
+    handle_not_found_endpoint(conn);
   }
 #endif
 
