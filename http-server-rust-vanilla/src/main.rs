@@ -14,6 +14,8 @@ fn main() -> std::io::Result<()> {
     } else if mode == "thread_pool" {
         server::use_thread_pool(listener.try_clone().unwrap());
     } else if mode == "epoll" {
+        todo!("freezing when multiple connections");
+        listener.set_nonblocking(true)?;
         let _ = server::use_epoll(listener.try_clone().unwrap());
     } else {
         panic!("invalid arg...")

@@ -1,11 +1,10 @@
-use crate::connection_handler::HandleConnection;
+use crate::connection_handler::handle_connection;
 use crate::thread_pool::ThreadPool;
-use libc::{EPOLL_CTL_ADD, EPOLLET, EPOLLIN, epoll_create1, epoll_ctl, epoll_event, epoll_wait};
+use libc::{EPOLL_CTL_ADD, EPOLLIN, epoll_create1, epoll_ctl, epoll_event, epoll_wait};
 use std::{
-    collections::HashMap,
     io,
     net::{TcpListener, TcpStream},
-    os::fd::{AsRawFd, RawFd},
+    os::unix::io::{AsRawFd, FromRawFd},
     thread,
 };
 
@@ -14,7 +13,7 @@ pub fn use_threads(listener: TcpListener) {
         let stream = stream.unwrap();
 
         thread::spawn(|| {
-            stream.handle_connection();
+            handle_connection(stream);
         });
     }
 }
@@ -25,7 +24,7 @@ pub fn use_thread_pool(listener: TcpListener) {
         let stream = stream.unwrap();
 
         pool.execute(|| {
-            stream.handle_connection();
+            handle_connection(stream);
         });
     }
 }
@@ -33,8 +32,6 @@ pub fn use_thread_pool(listener: TcpListener) {
 const MAX_EVENTS: usize = 1024;
 pub fn use_epoll(listener: TcpListener) -> io::Result<()> {
     unsafe {
-        listener.set_nonblocking(true)?;
-
         let epoll_fd = epoll_create1(0);
         if epoll_fd == -1 {
             return Err(io::Error::last_os_error());
@@ -52,7 +49,6 @@ pub fn use_epoll(listener: TcpListener) -> io::Result<()> {
         }
 
         let mut events = vec![epoll_event { events: 0, u64: 0 }; MAX_EVENTS];
-        let mut clients: HashMap<RawFd, TcpStream> = HashMap::new();
 
         loop {
             let n = epoll_wait(epoll_fd, events.as_mut_ptr(), MAX_EVENTS as i32, -1);
@@ -73,7 +69,7 @@ pub fn use_epoll(listener: TcpListener) -> io::Result<()> {
                                 stream.set_nonblocking(true)?;
 
                                 let mut event = epoll_event {
-                                    events: EPOLLIN as u32 | EPOLLET as u32,
+                                    events: EPOLLIN as u32, //Edge triggered causes errors
                                     u64: conn_fd as u64,
                                 };
 
@@ -82,8 +78,6 @@ pub fn use_epoll(listener: TcpListener) -> io::Result<()> {
                                     libc::close(conn_fd);
                                     continue;
                                 }
-
-                                clients.insert(conn_fd, stream);
                             }
                             Err(ref e) if e.kind() == io::ErrorKind::WouldBlock => {
                                 break;
@@ -95,10 +89,10 @@ pub fn use_epoll(listener: TcpListener) -> io::Result<()> {
                         }
                     }
                 } else {
-                    if let Some(stream) = clients.remove(&fd) {
-                        stream.handle_connection();
-                        libc::close(fd);
-                    }
+                    let stream = TcpStream::from_raw_fd(fd);
+                    stream.set_nonblocking(true)?;
+                    handle_connection(stream);
+                    libc::close(fd);
                 }
             }
         }
