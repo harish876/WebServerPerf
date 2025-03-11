@@ -30,14 +30,6 @@ void *handle_connection_wrapper(void *arg) {
   return NULL;
 }
 
-int set_non_blocking(int fd) {
-  int old_option = fcntl(fd, F_GETFL);
-  int new_option = old_option | O_NONBLOCK;
-
-  fcntl(fd, F_SETFL, new_option);
-  return 0;
-}
-
 void use_thread_pool(int server_fd) {
   thread_pool_t pool;
   thread_pool_init(&pool, POOL_SIZE);
@@ -96,6 +88,14 @@ void use_threads(int server_fd) {
 
     // printf("Client %d connected\n", current_client);
   }
+}
+
+int set_non_blocking(int fd) {
+  int old_option = fcntl(fd, F_GETFL);
+  int new_option = old_option | O_NONBLOCK;
+
+  fcntl(fd, F_SETFL, new_option);
+  return 0;
 }
 
 void use_epoll(int server_fd) {

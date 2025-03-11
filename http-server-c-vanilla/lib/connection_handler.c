@@ -116,6 +116,7 @@ void handle_connection(int conn) {
     return; // Exit the function
   }
   buff[bytes_read] = '\0';
+  printf("Request: %s", buff);
 
 #if USE_HTTP_PARSER
   http_parser parser;
