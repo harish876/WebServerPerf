@@ -1,269 +1,118 @@
-use epoll::{ControlOptions::*, Event, Events};
-use serde::{Deserialize, Serialize};
-use serde_json::Result as JsonResult;
+use crate::connection_handler::{ConnectionStatus, handle_connection};
+use crate::thread_pool::ThreadPool;
+use libc::{EPOLL_CTL_ADD, EPOLLIN, close, epoll_create1, epoll_ctl, epoll_event, epoll_wait};
 use std::{
     collections::HashMap,
-    io::{self, Read, Write},
-    net::TcpListener,
-    os::unix::io::AsRawFd,
+    io,
+    net::{TcpListener, TcpStream},
+    os::fd::{AsRawFd, RawFd},
+    thread,
 };
 
-#[derive(Debug, Clone)]
-struct RequestContext {
-    method: String,
-    endpoint: String,
-    content_length: usize,
-    accept_encoding: Option<String>,
-    content_type: Option<String>,
-}
-
-#[derive(Debug)]
-enum ConnectionState {
-    Read {
-        request: Vec<u8>,
-        read: usize,
-    },
-    Process {
-        context: RequestContext,
-        body: Vec<u8>,
-    },
-    Write {
-        response: Vec<u8>,
-        written: usize,
-    },
-    Flush,
-}
-
-#[derive(Deserialize, Serialize, Debug)]
-struct JsonBody {
-    id: u32,
-    value: String,
-}
-
 pub fn use_threads(listener: TcpListener) {
-    todo!("unimplemented");
+    for stream in listener.incoming() {
+        let stream = stream.unwrap();
+
+        thread::spawn(move || {
+            handle_connection(&stream);
+        });
+    }
 }
 
-pub fn use_thread_pool(listener: TcpListener) {
-    todo!("unimplemented");
+pub fn use_thread_pool(listener: TcpListener, thread_pool_size: usize) {
+    let pool = ThreadPool::new(thread_pool_size);
+    for stream in listener.incoming() {
+        let stream = stream.unwrap();
+
+        pool.execute(move || {
+            handle_connection(&stream);
+        });
+    }
 }
 
+const MAX_EVENTS: usize = 1024;
 pub fn use_epoll(listener: TcpListener) -> io::Result<()> {
-    let epoll = epoll::create(false).unwrap();
+    unsafe {
+        listener.set_nonblocking(true)?;
 
-    let event = Event::new(Events::EPOLLIN, listener.as_raw_fd() as _);
-    epoll::ctl(epoll, EPOLL_CTL_ADD, listener.as_raw_fd(), event).unwrap();
+        let epoll_fd = epoll_create1(0);
+        if epoll_fd == -1 {
+            return Err(io::Error::last_os_error());
+        }
 
-    let mut connections = HashMap::new();
+        let listener_fd = listener.as_raw_fd();
 
-    loop {
-        let mut events = [Event::new(Events::empty(), 0); 1024];
-        let timeout = -1; // block forever, until something happens
-        let num_events = epoll::wait(epoll, timeout, &mut events).unwrap();
+        let mut event = epoll_event {
+            events: EPOLLIN as u32,
+            u64: listener_fd as u64,
+        };
 
-        let mut completed = Vec::new();
-        'next: for event in &events[..num_events] {
-            let fd = event.data as i32;
+        if epoll_ctl(epoll_fd, EPOLL_CTL_ADD, listener_fd, &mut event) == -1 {
+            return Err(io::Error::last_os_error());
+        }
 
-            if fd == listener.as_raw_fd() {
-                // try accepting a connection
-                match listener.accept() {
-                    Ok((connection, _)) => {
-                        connection.set_nonblocking(true).unwrap();
+        let mut events = vec![epoll_event { events: 0, u64: 0 }; MAX_EVENTS];
+        let mut clients: HashMap<RawFd, TcpStream> = HashMap::new();
 
-                        let fd = connection.as_raw_fd();
-
-                        // register the connection with epoll
-                        let event = Event::new(Events::EPOLLIN | Events::EPOLLOUT, fd as _);
-                        epoll::ctl(epoll, EPOLL_CTL_ADD, fd, event).unwrap();
-
-                        let state = ConnectionState::Read {
-                            request: vec![0; 1024],
-                            read: 0,
-                        };
-
-                        connections.insert(fd, (connection, state));
-                    }
-                    Err(e) if e.kind() == io::ErrorKind::WouldBlock => {}
-                    Err(err) => panic!("failed to accept: {err}"),
-                }
-
-                continue 'next;
+        'event_loop: loop {
+            let n = epoll_wait(epoll_fd, events.as_mut_ptr(), MAX_EVENTS as i32, -1);
+            if n == -1 {
+                println!("Failed to wait on fd set");
+                close(epoll_fd);
+                return Err(io::Error::last_os_error());
             }
 
-            // otherwise, a connection must be ready
-            let (connection, state) = connections.get_mut(&fd).unwrap();
-            match state {
-                ConnectionState::Read { request, read } => {
-                    loop {
-                        // try reading from the stream
-                        match connection.read(&mut *request) {
-                            Ok(0) => {
-                                println!("client disconnected unexpectedly");
-                                completed.push(fd);
-                                continue 'next;
+            for i in 0..n as usize {
+                let fd = events[i].u64 as i32;
+
+                if fd == listener_fd {
+                    match listener.accept() {
+                        Ok((stream, _)) => {
+                            let conn_fd = stream.as_raw_fd();
+                            stream.set_nonblocking(true)?;
+
+                            let mut event = epoll_event {
+                                events: EPOLLIN as u32,
+                                u64: conn_fd as u64,
+                            };
+
+                            if epoll_ctl(epoll_fd, EPOLL_CTL_ADD, conn_fd, &mut event) == -1 {
+                                println!("Failed to add client socket to epoll");
+                                libc::close(conn_fd);
+                                continue;
                             }
-                            Ok(n) => {
-                                *read += n;
 
-                                if let Some(pos) =
-                                    request.windows(4).position(|window| window == b"\r\n\r\n")
-                                {
-                                    // Parse the headers
-                                    let headers_str = String::from_utf8_lossy(&request[..pos + 4]);
-                                    let headers_vec: Vec<String> = headers_str
-                                        .split("\r\n")
-                                        .filter(|line| !line.is_empty())
-                                        .map(|line| line.to_string())
-                                        .collect();
-
-                                    // Extract HTTP method, Content-Length, and Accept-Encoding
-                                    let empty_string = String::new();
-                                    let request_line = headers_vec.first().unwrap_or(&empty_string);
-                                    let mut parts = request_line.split_whitespace();
-                                    let method = parts.next().unwrap_or("").to_string();
-                                    let endpoint = parts.next().unwrap_or("").to_string();
-
-                                    let content_length = headers_vec
-                                        .iter()
-                                        .find(|line| line.starts_with("Content-Length:"))
-                                        .and_then(|line| {
-                                            line.split(':').nth(1).map(|s| s.to_string())
-                                        })
-                                        .and_then(|len| len.trim().parse::<usize>().ok())
-                                        .unwrap_or(0);
-
-                                    let accept_encoding = headers_vec
-                                        .iter()
-                                        .find(|line| line.starts_with("Accept-Encoding:"))
-                                        .and_then(|line| {
-                                            line.split(':').nth(1).map(|s| s.trim().to_string())
-                                        });
-
-                                    let content_type = headers_vec
-                                        .iter()
-                                        .find(|line| line.starts_with("Content-Type:"))
-                                        .and_then(|line| {
-                                            line.split(':').nth(1).map(|s| s.trim().to_string())
-                                        });
-
-                                    let context = RequestContext {
-                                        method,
-                                        endpoint,
-                                        content_length,
-                                        accept_encoding,
-                                        content_type,
-                                    };
-
-                                    println!("Context: {:?}", context);
-
-                                    // Store everything after \r\n\r\n
-                                    let body_start = pos + 4;
-                                    let body = request[body_start..*read].to_vec();
-                                    let formatted_body = String::from_utf8_lossy(&body);
-                                    println!("Body: {:?}", formatted_body);
-                                    assert!(content_length == body.len());
-
-                                    *state = ConnectionState::Process { context, body };
-                                    break;
-                                }
-                            }
-                            Err(err) if err.kind() == io::ErrorKind::WouldBlock => {
-                                continue 'next;
-                            }
-                            Err(err) => panic!("{err}"),
+                            clients.insert(conn_fd, stream);
+                        }
+                        Err(ref e) if e.kind() == io::ErrorKind::WouldBlock => {
+                            continue;
+                        }
+                        Err(e) => {
+                            println!("Failed to accept connection: {}", e);
+                            break 'event_loop;
                         }
                     }
-                }
-
-                ConnectionState::Process { context, body } => {
-                    let response = if context
-                        .content_type
-                        .clone()
-                        .unwrap_or("text/plain".to_owned())
-                        == "application/json"
-                        && context.endpoint == "/json"
-                    {
-                        let json_result: JsonResult<JsonBody> = serde_json::from_slice(&body);
-                        match json_result {
-                            Ok(mut json_body) => {
-                                json_body.id += 1;
-                                let modified_body =
-                                    serde_json::to_string(&json_body).unwrap_or("".to_owned());
-                                format!(
-                                    "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: {}\r\n\r\n{}",
-                                    modified_body.len(),
-                                    modified_body
-                                )
+                } else {
+                    if let Some(stream) = clients.get_mut(&fd) {
+                        match handle_connection(stream) {
+                            ConnectionStatus::Complete => {
+                                clients.remove(&fd);
+                                close(fd);
                             }
-                            Err(e) => {
-                                println!("Failed to parse JSON body: {}", e);
-                                "HTTP/1.1 400 Bad Request\r\n\r\n".to_string()
+                            ConnectionStatus::WouldBlock => {
+                                println!("Connection would block, keeping for later");
+                                continue;
+                            }
+                            ConnectionStatus::Error => {
+                                clients.remove(&fd);
+                                close(fd);
                             }
                         }
-                    } else {
-                        concat!(
-                            "HTTP/1.1 200 OK\r\n",
-                            "Content-Length: 12\n",
-                            "Connection: close\r\n\r\n",
-                            "Hello world!"
-                        )
-                        .to_string()
-                    };
-
-                    *state = ConnectionState::Write {
-                        response: response.as_bytes().to_vec(),
-                        written: 0,
-                    };
-                }
-
-                ConnectionState::Write { response, written } => {
-                    loop {
-                        match connection.write(&response[*written..]) {
-                            Ok(0) => {
-                                completed.push(fd);
-                                continue 'next;
-                            }
-                            Ok(n) => {
-                                *written += n;
-                            }
-                            Err(e) if e.kind() == io::ErrorKind::WouldBlock => {
-                                // not ready yet, move on to the next connection
-                                continue 'next;
-                            }
-                            Err(e) => panic!("{e}"),
-                        }
-
-                        // did we write the whole response yet?
-                        if *written == response.len() {
-                            break;
-                        }
-                    }
-
-                    // successfully wrote the response, try flushing next
-                    *state = ConnectionState::Flush;
-                }
-
-                ConnectionState::Flush => {
-                    match connection.flush() {
-                        Ok(_) => {
-                            completed.push(fd);
-                        }
-                        Err(e) if e.kind() == io::ErrorKind::WouldBlock => {
-                            // not ready yet, move on to the next connection
-                            continue 'next;
-                        }
-                        Err(e) => panic!("{e}"),
                     }
                 }
             }
         }
-
-        //cleanup here
-        for fd in completed {
-            let (connection, _state) = connections.remove(&fd).unwrap();
-            // unregister from epoll
-            drop(connection);
-        }
+        close(epoll_fd);
+        Ok(())
     }
 }

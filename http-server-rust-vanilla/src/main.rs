@@ -12,7 +12,14 @@ fn main() -> std::io::Result<()> {
     if mode == "threads" {
         server::use_threads(listener.try_clone().unwrap());
     } else if mode == "thread_pool" {
-        server::use_thread_pool(listener.try_clone().unwrap());
+        let thread_pool_size = if mode == "thread_pool" {
+            args.get(2)
+                .and_then(|s| s.parse::<usize>().ok())
+                .unwrap_or(2) // Default pool size if not specified or invalid
+        } else {
+            2 // Default value for other modes (though not used)
+        };
+        server::use_thread_pool(listener.try_clone().unwrap(), thread_pool_size);
     } else if mode == "epoll" {
         listener.set_nonblocking(true)?;
         let _ = server::use_epoll(listener.try_clone().unwrap());

@@ -1,5 +1,6 @@
 #include "connection_handler.h"
 #include "yyjson.h"
+#include <errno.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -50,7 +51,6 @@ void handle_json_endpoint(int conn, const char *body) {
                            "\r\n"
                            "{\"error\":\"Invalid JSON\"}";
     send(conn, response, strlen(response), 0);
-    close(conn);
     return;
   }
 
@@ -100,20 +100,26 @@ void handle_json_endpoint(int conn, const char *body) {
 void handle_root_endpoint(int conn) {
   char response[] = "HTTP/1.1 200 OK\r\n\r\n";
   send(conn, response, sizeof(response) - 1, 0);
+  return;
 }
 
 void handle_not_found_endpoint(int conn) {
   char response[] = "HTTP/1.1 404 Not Found\r\n\r\n";
   send(conn, response, sizeof(response) - 1, 0);
+  return;
 }
 
-void handle_connection(int conn) {
+CONNECTION_STATUS handle_connection(int conn) {
   uint8_t buff[1024];
   ssize_t bytes_read = read(conn, buff, sizeof(buff));
   if (bytes_read == -1) {
-    perror("read");
-    close(conn);
-    return; // Exit the function
+    if ((errno == EAGAIN) || (errno == EWOULDBLOCK)) {
+      return WOULD_BLOCK;
+    } else {
+      perror("read");
+      close(conn);
+      return ERROR;
+    }
   }
   buff[bytes_read] = '\0';
   printf("Request: %s", buff);
@@ -174,6 +180,6 @@ void handle_connection(int conn) {
     handle_not_found_endpoint(conn);
   }
 #endif
-
   close(conn);
+  return COMPLETE;
 }

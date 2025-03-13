@@ -1,8 +1,10 @@
-#!/usr/bin/env bash
+#!/bin/bash
+# filepath: /root/WebServerPerf/scripts/test.sh
 
-URL="http://64.23.188.215:4221/json"
-NUM_REQUESTS=1000
-CONCURRENCY=10
-DURATION="30s"  # Duration of the test
+num_requests=1000
+concurrency=100
+url="http://147.182.205.94:4221/json"
+payload_file="data.json"
+content_length=$(wc -c < "$payload_file")
 
-wrk -t$CONCURRENCY -c$CONCURRENCY -d$DURATION -s post.lua $URL
+ab -n $num_requests -c $concurrency -t 300 -p $payload_file -s 30000 -T 'application/json' -H "Content-Length: $content_length" $url

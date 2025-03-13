@@ -20,7 +20,13 @@ async fn handle_request(req: Request<Body>) -> Result<Response<Body>, Infallible
 
     if method == Method::GET && path.starts_with("/echo/") {
         let name = path.trim_start_matches("/echo/").to_string();
-        Ok(Response::new(Body::from(name)))
+        let json_response = serde_json::json!({ "message": name });
+        let json_response_str = serde_json::to_string(&json_response).unwrap();
+        let mut response = Response::new(Body::from(json_response_str));
+        response
+            .headers_mut()
+            .insert(CONTENT_TYPE, "application/json".parse().unwrap());
+        Ok(response)
     } else if method == Method::POST && path == "/json" {
         let whole_body = hyper::body::to_bytes(req.into_body()).await.unwrap();
         let json_body: Result<JsonBody, _> = serde_json::from_slice(&whole_body);

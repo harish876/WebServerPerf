@@ -148,8 +148,15 @@ void use_epoll(int server_fd) {
           continue;
         }
       } else {
-        handle_connection(events[i].data.fd);
-        close(events[i].data.fd);
+        CONNECTION_STATUS status = handle_connection(events[i].data.fd);
+        if (status == WOULD_BLOCK) {
+          continue;
+        } else if (status == COMPLETE) {
+          close(events[i].data.fd);
+        } else {
+          close(events[i].data.fd);
+          perror("error at handle_connection");
+        }
       }
     }
   }
