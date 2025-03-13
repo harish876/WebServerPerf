@@ -122,7 +122,7 @@ CONNECTION_STATUS handle_connection(int conn) {
     }
   }
   buff[bytes_read] = '\0';
-  printf("Request: %s", buff);
+  // printf("Request: %s", buff);
 
 #if USE_HTTP_PARSER
   http_parser parser;

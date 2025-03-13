@@ -1,0 +1,57 @@
+FROM gcc:bullseye
+
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    cmake \
+    git \
+    curl \
+    zip \
+    unzip \
+    tar \
+    pkg-config \
+    libssl-dev \
+    --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install vcpkg
+WORKDIR /opt
+RUN git clone https://github.com/Microsoft/vcpkg.git && \
+    cd vcpkg && \
+    ./bootstrap-vcpkg.sh -disableMetrics && \
+    ./vcpkg integrate install
+
+# Set environment variable for vcpkg
+ENV VCPKG_ROOT=/opt/vcpkg
+
+# Set working directory
+WORKDIR /app
+
+# Copy your C server code. TODO add excludes
+COPY ./http-server-c-vanilla .
+
+# Run build script if it exists
+RUN if [ -f ./scripts/compile.sh ]; then \
+        chmod +x ./scripts/compile.sh && \
+        ./scripts/compile.sh; \
+    else \
+        mkdir -p build && \
+        cd build && \
+        cmake .. -DCMAKE_TOOLCHAIN_FILE=/opt/vcpkg/scripts/buildsystems/vcpkg.cmake && \
+        make; \
+    fi
+
+# Expose the server port
+EXPOSE 4221
+
+# Make the http-server script executable
+RUN chmod +x ./scripts/http-server.sh
+
+# Expose the server port
+EXPOSE 4221
+
+# Set the entrypoint to your http-server script
+ENTRYPOINT ["./scripts/http-server.sh"]
+
+# Default argument is "epoll" but can be overridden when running the container
+CMD ["epoll"]

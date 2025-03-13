@@ -1,0 +1,14 @@
+FROM rust:slim-bullseye
+
+# Set working directory
+WORKDIR /app
+
+# Copy your Rust server code
+COPY ./http-server-rust-vanilla .
+
+# Expose the server port
+EXPOSE 4221
+
+# Run the server with epoll mode
+ENTRYPOINT ["cargo"]
+CMD ["run", "epoll"]

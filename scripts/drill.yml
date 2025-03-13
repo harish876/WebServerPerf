@@ -1,8 +1,8 @@
 ---
 
-concurrency: 1000
+concurrency: 100
 base: 'http://localhost:4221'
-iterations: 10000
+iterations: 1000
 rampup: 2
 
 plan:
@@ -28,6 +28,10 @@ plan:
     assign: json
     tags:
       - json
+
+  - name: Waiting some seconds on the Json endpoint
+    delay:
+      seconds: 1
   
   - name: Assert json request response code
     assert:

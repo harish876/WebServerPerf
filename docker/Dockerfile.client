@@ -1,0 +1,23 @@
+FROM rust:slim-bullseye
+
+# Install dependencies for drill
+RUN apt-get update && apt-get install -y \
+    curl \
+    build-essential \
+    pkg-config \
+    libssl-dev \
+    --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install drill
+RUN cargo install drill
+
+# Set working directory
+WORKDIR /app
+
+# Copy your scripts directory
+COPY ./scripts /app/scripts
+
+# Default command to run drill
+ENTRYPOINT ["drill"]
+CMD ["--benchmark", "/app/scripts/drill.yml", "--stats", "--tags", "json"]
